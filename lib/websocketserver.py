@@ -40,18 +40,11 @@ class server(threading.Thread):
         self.host = host
         self.port = port
 
-
-    # Send to single client
-    async def sendToClient(self, websocket, method, payload):
-        await websocket.send(msg(method, payload))
-    
     # Broadcast to all clients
     async def broadcast(self, method, payload):
         websockets.broadcast(v.connections, msg(method, payload))
 
     async def connectionhandler(self, websocket):
-        connectionid = str(uuid.uuid4())
-
         try:
             # Register user
             user = User(websocket)

@@ -13,15 +13,19 @@ import vars as v
 import httpserver
 import websocketserver
 
-httpserver.server("", 9000, "www").start()
-websocketserver.server("192.168.178.5", 9002).start()
+workspace = mokkalib.getWorkspace()
 
 
 def mokkaEvent(event):
     print(event)
 
 mokkalib.setEventHandler(mokkaEvent)
-mokkalib.triggerGlobalEvent('TANKS ONLINE')
-workspace = mokkalib.getWorkspace()
 
-#websocketserver.startd()
+# Start Webserver
+httpserver.server("", 9000, "www").start()
+
+# Start Websocketserver
+websocketserver.server("192.168.178.5", 9002).start()
+
+mokkalib.triggerGlobalEvent('TANKS ONLINE')
+
