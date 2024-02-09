@@ -1,0 +1,3 @@
+# Vars
+users = {}
+connections = set()

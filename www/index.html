@@ -1,1 +1,24 @@
-asd
+<body>
+    asd
+    <button onclick="send('AUTH','asd')">AUTH</button>
+    <button onclick="send('rmp','asd')">TEST</button>
+</body>
+
+<script>
+    var websocket;
+
+
+    function send(method, payload) {
+        websocket.send(JSON.stringify({ m: method, p: payload }));
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+    const messages = document.createElement("ul");
+    document.body.appendChild(messages);
+
+    websocket = new WebSocket("ws://192.168.178.5:9002/");
+    websocket.onmessage = ({ data }) => {
+        console.log(data);
+    };
+    });    
+</script>

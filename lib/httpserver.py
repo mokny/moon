@@ -1,7 +1,7 @@
 import http.server
 import socketserver
 import threading
-
+import vars as v
 
 
 class server(threading.Thread):
