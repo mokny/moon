@@ -24,13 +24,13 @@ def mokkaEvent(event):
 mokkalib.setEventHandler(mokkaEvent)
 
 # Init Database
-v.db = database.DB('localhost', 3306, 'spc', 'password', 'spc')
+v.db = database.DB(mokkalib.getOption('db_host'), mokkalib.getOption('db_port'), mokkalib.getOption('db_user'), mokkalib.getOption('db_password'), mokkalib.getOption('db_database'))
 
 # Start Webserver
-v.httpserver = servers.newHTTPServer("", 9000, "www")
+v.httpserver = servers.newHTTPServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_http'), "www")
 
 # Start Websocketserver
-v.websocketserver = servers.newWebSocketServer("192.168.178.5", 9002, handlers.connectionhandler, handlers.messagehandler, handlers.disconnecthandler)
+v.websocketserver = servers.newWebSocketServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_websocket'), handlers.connectionhandler, handlers.messagehandler, handlers.disconnecthandler)
 
 mokkalib.triggerGlobalEvent('TANKS ONLINE')
 
