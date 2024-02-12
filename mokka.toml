@@ -9,6 +9,7 @@ options.server_host = ""
 options.server_port_websocket = 9991
 options.server_port_http = 9990
 piplibs = [
-    'websockets'
+    'websockets',
+    'mysql-connector-python'
 ]
 

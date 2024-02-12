@@ -7,6 +7,7 @@ import socketserver
 import threading
 import uuid
 import json
+import time
 
 def newHTTPServer(host, port, directory):
     s = HTTPServer(host, port, directory)
@@ -26,12 +27,24 @@ class WebSocketClient():
         self.id = str(uuid.uuid4())
         self.websocket = websocket
         self.server = server
+        self.path = self.websocket.path
+        self.ip = self.websocket.remote_address[0]
+        
+        self.data = {}  # Stores all external data for this client
+        self.timestamp_connect = int(time.time())
+        self.timestamp_lastmessage = int(time.time())
 
         self.disconnectflag = False
         self.create()
 
     def disconnect(self):
         self.disconnectflag = True
+
+    def secondsConnected(self):
+        return int(time.time()) - self.timestamp_connect
+
+    def secondsIdle(self):
+        return int(time.time()) - self.timestamp_lastmessage
 
     def create(self):
         self.server.clients[self.id] = self
@@ -51,6 +64,7 @@ class WebSocketServer(threading.Thread):
         threading.Thread.__init__(self)
         self.host = host
         self.port = port
+        
         self.connectionhandler = connectionhandler
         self.messagehandler = messagehandler
         self.disconnecthandler = disconnecthandler
@@ -79,6 +93,7 @@ class WebSocketServer(threading.Thread):
         try:
             await self.connectionhandler(self, client)
             async for raw in websocket:
+                client.timestamp_lastmessage = int(time.time())
                 message = json.loads(raw)
                 await self.messagehandler(self, client, message['m'], message['p'])
                 if client.disconnectflag: break
@@ -89,6 +104,7 @@ class WebSocketServer(threading.Thread):
             
 
     async def startserver(self):
+        #async with websockets.serve(self.newconnection, self.host, self.port):
         async with websockets.serve(self.newconnection, self.host, self.port):
             await asyncio.Future()
 

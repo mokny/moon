@@ -13,6 +13,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent.resolve()) + '/lib')
 import vars as v
 import servers
 import handlers
+import database
 
 workspace = mokkalib.getWorkspace()
 
@@ -22,11 +23,14 @@ def mokkaEvent(event):
 
 mokkalib.setEventHandler(mokkaEvent)
 
+# Init Database
+v.db = database.DB('localhost', 3306, 'spc', 'password', 'spc')
+
 # Start Webserver
-httpserver = servers.newHTTPServer("", 9000, "www")
+v.httpserver = servers.newHTTPServer("", 9000, "www")
 
 # Start Websocketserver
-websocketserver = servers.newWebSocketServer("192.168.178.5", 9002, handlers.connectionhandler, handlers.messagehandler, handlers.disconnecthandler)
+v.websocketserver = servers.newWebSocketServer("192.168.178.5", 9002, handlers.connectionhandler, handlers.messagehandler, handlers.disconnecthandler)
 
 mokkalib.triggerGlobalEvent('TANKS ONLINE')
 
