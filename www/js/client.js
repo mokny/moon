@@ -1,6 +1,3 @@
-var client;
-
-
 class Client {
     
     constructor(serveraddr) {
@@ -9,7 +6,40 @@ class Client {
         this.connected = false;
         this.reconnects = 0;
         this.maxreconnects = 10;
-        this.connect()
+        this.reconnectdelay = 1000;
+        this.onConnectHandler = false;
+        this.onMessageHandler = false;
+        this.onDisconnectHandler = false;
+        this.onReconnectHandler = false;
+        this.onReconnectFailedHandler = false;
+    }
+
+    setMaxReconnects(value) {
+        this.maxreconnects = value;
+    }
+
+    setReconnectDelay(value) {
+        this.reconnectdelay = value;
+    }
+
+    setOnMessageHandler(func) {
+        this.onMessageHandler = func;
+    }
+
+    setOnConnectHandler(func) {
+        this.onConnectHandler = func;
+    }
+
+    setOnDisconnectHandler(func) {
+        this.onDisconnectHandler = func;
+    }
+
+    setOnReconnectHandler(func) {
+        this.onReconnectHandler = func;
+    }
+
+    setOnReconnectFailedHandler(func) {
+        this.onReconnectFailedHandler = func;
     }
 
     connect() {
@@ -21,13 +51,26 @@ class Client {
         this.socket.onopen = ({ event }) => {
             this.reconnects = 0;
             this.connected = true;
+            if (this.onConnectHandler) {
+                this.onConnectHandler(event);
+            }
         };
         
         this.socket.onmessage = ({ data }) => {
-            this.parsemessage(data)
+            if (this.onMessageHandler) {
+                try {
+                    var msg = JSON.parse(data);
+                    this.onMessageHandler(msg['m'], msg['p']);
+                } catch(error) {
+                    console.log(error);
+                }
+            }
         };
 
         this.socket.onclose = ({ event }) => {
+            if (this.onDisconnectHandler) {
+                this.onDisconnectHandler(event);
+            }
             this.disconnected();
         };
 
@@ -36,9 +79,16 @@ class Client {
     disconnected() {
         this.connected = false;
         if (this.reconnects < this.maxreconnects) {
+            if (this.onReconnectHandler) {
+                this.onReconnectHandler(this.reconnects);
+            }
             setTimeout(() => {
                 this.connect();
-            }, 1000);
+            }, this.reconnectdelay);
+        } else {
+            if (this.onReconnectFailedHandler) {
+                this.onReconnectFailedHandler();
+            }
         }
     }
 
@@ -51,10 +101,3 @@ class Client {
     }    
 }
 
-function init() {
-    client = new Client("ws://192.168.178.5:9002/")
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-    init();
-}); 

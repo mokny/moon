@@ -8,6 +8,44 @@
     asd
     <button onclick="client.send('AUTH','asd')">AUTH</button>
     <button onclick="client.send('rmp','asd')">TEST</button>
+
+    <script>
+        var client;
+        
+        function onConnect(event) {
+            console.log("Connected");
+        }
+
+        function onDisconnect(event) {
+            console.log("Disconnected");
+        }
+
+        function onReConnect(cnt) {
+            console.log("Reconnecting...Try #" + cnt);
+        }
+
+        function onReConnectFailed() {
+            console.log("Reconnect failed. No more retries.");
+        }
+
+        function onMessage(method, payload) {
+            console.log("Message");
+            console.log(method + ' ' +  payload);
+        }
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            client = new Client("ws://192.168.178.5:9002/");
+            client.setMaxReconnects(10);
+            client.setReconnectDelay(2000);
+            client.setOnConnectHandler(onConnect);
+            client.setOnDisconnectHandler(onDisconnect);
+            client.setOnMessageHandler(onMessage);
+            client.setOnReconnectHandler(onReConnect);
+            client.setOnReconnectFailedHandler(onReConnectFailed);
+            client.connect();            
+        });         
+    </script>    
 </body>
 
 </html>
