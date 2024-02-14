@@ -175,8 +175,8 @@ class WebServer(threading.Thread):
                         self.send_header("Content-Type", mimetype)
 
                     self.end_headers()
-                    
-                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js'):
+
+                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js') or self.path.lower().endswith('.css'):
                         f = open('www' + self.path, "r")
                         content = f.read()
                         scripts = re.findall(r'\{\{.*?\}\}', content)
