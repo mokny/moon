@@ -27,6 +27,11 @@ class DB():
         self.close(db,crs)
         return res
 
+    def ex(self, statement):
+        db, crs = self.connect()
+        crs.execute(statement)
+        self.close(db,crs)
+
     def close(self, db, crs):
         crs.close()
         db.close()

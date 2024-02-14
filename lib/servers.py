@@ -8,6 +8,9 @@ import uuid
 import json
 import time
 import signal
+import os
+import mimetypes
+import re
 
 def newWebServer(host, port, directory):
     s = WebServer(host, port, directory)
@@ -151,6 +154,56 @@ class WebServer(threading.Thread):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, directory='www', **kwargs)
 
+            def do_GET(self):
+                if self.path == '/': self.path = '/index.html'
+                mimetype = mimetypes.guess_type(self.path)
+
+                if os.path.isfile('www' + self.path):
+                    self.send_response(200)
+                    self.send_header("Content-type", mimetype)
+                    self.end_headers()
+                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js'):
+                        f = open('www' + self.path, "r")
+                        content = f.read()
+                        scripts = re.findall(r'\{\{\{.*?\}\}\}', content)
+                        for script in scripts:
+                            result = self.parsescript(script)
+                            content = content.replace(script, result)
+
+                        self.wfile.write(bytes(content,'utf-8')) # Read the file and send the contents                 
+                    else:
+                        with open('www' + self.path, 'rb') as file: 
+                            self.wfile.write(file.read()) # Read the file and send the contents  
+                else:
+                    self.send_response(404)
+                    self.end_headers()     
+
+            def parsescript(self, script):
+                if str(script).startswith('{{{%') and str(script).endswith('%}}}'):
+                    script = script.replace('{{{%','',1)
+                    script = script[::-1]
+                    script = script.replace('}}}%','',1)
+                    script = script[::-1]
+                    lines = script.split(';')
+                    result = ''
+                    for line in lines:
+                        try:
+                            spl = line.strip().split(' ', 1)
+                            method = spl[0]
+
+                            if method == 'echo':
+                                result += spl[1]
+                                
+                            if method == 'timestamp':
+                                result += str(int(time.time()))
+
+                        except:
+                            result += 'error'
+                            pass
+                    return result
+                else:
+                    return script
+
         self.server = HTTPServer((self.host, self.port), Handler)
         thread = threading.Thread(target = self.server.serve_forever)
         thread.daemon = True
@@ -159,3 +212,4 @@ class WebServer(threading.Thread):
     def kill(self):
         print("Shutting down WebServer") 
         self.server.shutdown()
+
