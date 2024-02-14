@@ -1,4 +1,10 @@
-class Client {
+var WSSClient;
+
+window.addEventListener("DOMContentLoaded", () => {
+    WSSClient = new WebSocketClient("ws://{{% get websocket.host %}}:{{% get websocket.port %}}/");
+});
+
+class WebSocketClient {
     
     constructor(serveraddr) {
         this.serveraddr = serveraddr;

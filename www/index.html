@@ -3,15 +3,15 @@
 <head>
 <title>Client</title>
 <script src="js/client.js" lang="JavaScript"></script>
+<link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
     asd {{% echo asdf; echo 1; timestamp; echo gaga lala; get test; get websocket.host %}}
     {{% template www/testtemplate.html %}}
-    <button onclick="client.send('AUTH','asd')">AUTH</button>
-    <button onclick="client.send('rmp','asd')">TEST</button>
+    <button onclick="WSSClient.send('AUTH','asd')">AUTH</button>
+    <button onclick="WSSClient.send('rmp','asd')">TEST</button>
 
     <script>
-        var client;
 
         function onConnect(event) {
             console.log("Connected");
@@ -40,16 +40,15 @@
 
 
         window.addEventListener("DOMContentLoaded", () => {
-            client = new Client("ws://{{% get websocket.host %}}:{{% get websocket.port %}}/");
-            client.setMaxReconnects(10);
-            client.setReconnectDelay(2000);
-            client.setOnConnectHandler(onConnect);
-            client.setOnDisconnectHandler(onDisconnect);
-            client.setOnMessageHandler(onMessage);
-            client.setOnReconnectHandler(onReConnect);
-            client.setOnReconnectFailedHandler(onReConnectFailed);
-            client.setOnLatencyChangedHandler(onLatencyChanged);
-            client.connect();            
+            WSSClient.setMaxReconnects(10);
+            WSSClient.setReconnectDelay(2000);
+            WSSClient.setOnConnectHandler(onConnect);
+            WSSClient.setOnDisconnectHandler(onDisconnect);
+            WSSClient.setOnMessageHandler(onMessage);
+            WSSClient.setOnReconnectHandler(onReConnect);
+            WSSClient.setOnReconnectFailedHandler(onReConnectFailed);
+            WSSClient.setOnLatencyChangedHandler(onLatencyChanged);
+            WSSClient.connect();            
         });         
     </script>    
 </body>

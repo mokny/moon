@@ -164,7 +164,16 @@ class WebServer(threading.Thread):
 
                 if os.path.isfile('www' + self.path):
                     self.send_response(200)
-                    self.send_header("Content-type", mimetype)
+
+                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm'):
+                        self.send_header("Content-Type", 'text/html')
+                    elif self.path.lower().endswith('.css'):
+                        self.send_header("Content-Type", 'text/css')
+                    elif self.path.lower().endswith('.js'):
+                        self.send_header("Content-Type", 'text/javascript')
+                    else:
+                        self.send_header("Content-Type", mimetype)
+
                     self.end_headers()
                     if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js'):
                         f = open('www' + self.path, "r")
@@ -174,21 +183,21 @@ class WebServer(threading.Thread):
                             result = self.webserver.parsescript(script)
                             content = content.replace(script, result)
 
-                        self.wfile.write(bytes(content,'utf-8')) # Read the file and send the contents                 
+                        self.wfile.write(bytes(content,'utf-8')) 
                     else:
                         with open('www' + self.path, 'rb') as file: 
-                            self.wfile.write(file.read()) # Read the file and send the contents  
+                            self.wfile.write(file.read())   
                 else:
                     self.send_response(404)
                     self.end_headers()     
 
-        webhandler = partial(Handler, self)
-        self.server = HTTPServer((self.host, self.port), webhandler)
+        self.webhandler = partial(Handler, self)
+        self.server = HTTPServer((self.host, self.port), self.webhandler)
         thread = threading.Thread(target = self.server.serve_forever)
         thread.daemon = True
         thread.start() 
 
-    def addscriptvar(self, var, value):
+    def setscriptvar(self, var, value):
         self.scriptvars[var] = value
 
     def getscriptvar(self, var, default='nothing'):
