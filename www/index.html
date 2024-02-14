@@ -11,7 +11,7 @@
 
     <script>
         var client;
-        
+
         function onConnect(event) {
             console.log("Connected");
         }
@@ -26,6 +26,10 @@
 
         function onReConnectFailed() {
             console.log("Reconnect failed. No more retries.");
+        }
+
+        function onLatencyChanged(measuredby, latency) {
+            console.log('Latency measured by '+ measuredby + ': ' + latency + 'ms');
         }
 
         function onMessage(method, payload) {
@@ -43,6 +47,7 @@
             client.setOnMessageHandler(onMessage);
             client.setOnReconnectHandler(onReConnect);
             client.setOnReconnectFailedHandler(onReConnectFailed);
+            client.setOnLatencyChangedHandler(onLatencyChanged);
             client.connect();            
         });         
     </script>    

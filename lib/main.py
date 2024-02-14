@@ -1,9 +1,10 @@
 import mokkalib
 
 class Main():
-    def __init__(self, database, httpserver, websocketserver):  
+    def __init__(self, database, webserver, websocketserver):  
         self.database = database
-        self.httpserver = httpserver
+        self.webserver = webserver
         self.websocketserver = websocketserver
 
         mokkalib.triggerGlobalEvent('INITIALIZED')
+

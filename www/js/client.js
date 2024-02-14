@@ -12,6 +12,9 @@ class Client {
         this.onDisconnectHandler = false;
         this.onReconnectHandler = false;
         this.onReconnectFailedHandler = false;
+        this.onLatencyChangedHandler = false;
+        this.pingInterval = 10000;
+        this.latency = 0;
     }
 
     setMaxReconnects(value) {
@@ -42,6 +45,10 @@ class Client {
         this.onReconnectFailedHandler = func;
     }
 
+    setOnLatencyChangedHandler(func) {
+        this.onLatencyChangedHandler = func;
+    }
+
     connect() {
         if (this.connected) return;
         this.reconnects++;
@@ -54,13 +61,26 @@ class Client {
             if (this.onConnectHandler) {
                 this.onConnectHandler(event);
             }
+            this.ping();
         };
         
         this.socket.onmessage = ({ data }) => {
             if (this.onMessageHandler) {
                 try {
                     var msg = JSON.parse(data);
-                    this.onMessageHandler(msg['m'], msg['p']);
+                    if (msg['m'] == 'XPONG') {
+                        this.latency = performance.now() - msg['p'];
+                        if (this.onLatencyChangedHandler) {
+                            this.onLatencyChangedHandler('CLIENT', this.latency);
+                        }
+                    } else if (msg['m'] == 'XPING') {
+                        this.send('XPONG', msg['p']);
+                    } else if (msg['m'] == 'XLAT') {
+                        this.latency = msg['p'];
+                        this.onLatencyChangedHandler('SERVER', this.latency);
+                    } else {
+                        this.onMessageHandler(msg['m'], msg['p']);
+                    }
                 } catch(error) {
                     console.log(error);
                 }
@@ -74,6 +94,15 @@ class Client {
             this.disconnected();
         };
 
+    }
+
+    ping() {
+        if (this.pingInterval > 0) {
+            this.send("XPING", performance.now());
+            setTimeout(() => {
+                this.ping();
+            }, this.pingInterval);
+        }
     }
 
     disconnected() {

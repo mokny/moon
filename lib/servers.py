@@ -2,15 +2,15 @@
 
 import asyncio
 import websockets
-import http.server
-import socketserver
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import threading
 import uuid
 import json
 import time
+import signal
 
-def newHTTPServer(host, port, directory):
-    s = HTTPServer(host, port, directory)
+def newWebServer(host, port, directory):
+    s = WebServer(host, port, directory)
     s.start()
     return s
 
@@ -31,9 +31,15 @@ class WebSocketClient():
         self.ip = self.websocket.remote_address[0]
         
         self.data = {}  # Stores all external data for this client
+        
         self.timestamp_connect = int(time.time())
         self.timestamp_lastmessage = int(time.time())
+        self.timestamp_pingtest = 0
+        self.timestamp_nextping = int(time.time())
 
+        self.pinginterval = 5
+
+        self.latency = 0
         self.disconnectflag = False
         self.create()
 
@@ -57,6 +63,11 @@ class WebSocketClient():
     async def send(self, method, payload):
         await self.websocket.send(msg(method, payload))
 
+    async def ping(self):
+        if self.timestamp_nextping > int(time.time()): return
+        self.timestamp_pingtest = round(time.time() * 1000)
+        self.timestamp_nextping = round(time.time()) + self.pinginterval
+        await self.send('XPING', self.timestamp_pingtest)
 
 class WebSocketServer(threading.Thread):
     def __init__(self, host, port, connectionhandler, messagehandler, disconnecthandler):  
@@ -90,12 +101,22 @@ class WebSocketServer(threading.Thread):
         if len(self.connections) >= self.connections_max: return
 
         client = WebSocketClient(websocket, self)
+
+        await client.ping()
+
         try:
             await self.connectionhandler(self, client)
             async for raw in websocket:
                 client.timestamp_lastmessage = int(time.time())
                 message = json.loads(raw)
-                await self.messagehandler(self, client, message['m'], message['p'])
+                await client.ping()
+                if message['m'] == 'XPING':
+                    await client.send('XPONG', message['p'])
+                elif message['m'] == 'XPONG':
+                    client.latency = round(time.time() * 1000) - client.timestamp_pingtest
+                    await client.send('XLAT', client.latency)
+                else:
+                    await self.messagehandler(self, client, message['m'], message['p'])
                 if client.disconnectflag: break
 
         finally:
@@ -104,7 +125,6 @@ class WebSocketServer(threading.Thread):
             
 
     async def startserver(self):
-        #async with websockets.serve(self.newconnection, self.host, self.port):
         async with websockets.serve(self.newconnection, self.host, self.port):
             await asyncio.Future()
 
@@ -113,30 +133,29 @@ class WebSocketServer(threading.Thread):
 
 
 
-class HTTPServer(threading.Thread):
+class WebServer(threading.Thread):
     def __init__(self, host, port, directory):  
-        print("Initializing HTTP Server") 
+        print("Initializing WebServer") 
         threading.Thread.__init__(self)
         self.host = host
         self.port = port
         self.directory = directory
         self.server = None
+        signal.signal(signal.SIGTERM, self.sigterm_handler)  
 
-    def run(self):   
-        print("Starting HTTP Server") 
+    def sigterm_handler(self,_signo, _stack_frame):
+        self.kill()
 
-        class Handler(http.server.SimpleHTTPRequestHandler):
+    def run(self): 
+        class Handler(SimpleHTTPRequestHandler):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, directory='www', **kwargs)
 
-        with socketserver.TCPServer((self.host, self.port), Handler) as self.httpd:
-            print("serving at port", self.port)
-            try:
-                self.httpd.serve_forever()
-            except KeyboardInterrupt:
-                print("http shutdown")
-                self.httpd.shutdown()
-        self.httpd.shutdown()
+        self.server = HTTPServer((self.host, self.port), Handler)
+        thread = threading.Thread(target = self.server.serve_forever)
+        thread.daemon = True
+        thread.start() 
     
     def kill(self):
-        self.httpd.shutdown()
+        print("Shutting down WebServer") 
+        self.server.shutdown()
