@@ -2,7 +2,6 @@
 
 import sys
 import pathlib
-import threading
 import mokkalib
 import time
 import signal
