@@ -16,7 +16,7 @@ import sys
 
 def sigterm_handler(_signo, _stack_frame):
     print("Term received")
-    main.m.httpserver.kill()
+    main.m.webserver.kill()
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, sigterm_handler)
