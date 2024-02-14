@@ -11,6 +11,7 @@ import signal
 import os
 import mimetypes
 import re
+from functools import partial
 
 def newWebServer(host, port, directory):
     s = WebServer(host, port, directory)
@@ -144,6 +145,8 @@ class WebServer(threading.Thread):
         self.port = port
         self.directory = directory
         self.server = None
+        self.scriptvars = {}
+
         signal.signal(signal.SIGTERM, self.sigterm_handler)  
 
     def sigterm_handler(self,_signo, _stack_frame):
@@ -151,8 +154,9 @@ class WebServer(threading.Thread):
 
     def run(self): 
         class Handler(SimpleHTTPRequestHandler):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, directory='www', **kwargs)
+            def __init__(self, webserver, *args, **kwargs):
+                self.webserver = webserver
+                super().__init__(*args, **kwargs)
 
             def do_GET(self):
                 if self.path == '/': self.path = '/index.html'
@@ -167,7 +171,7 @@ class WebServer(threading.Thread):
                         content = f.read()
                         scripts = re.findall(r'\{\{\{.*?\}\}\}', content)
                         for script in scripts:
-                            result = self.parsescript(script)
+                            result = self.webserver.parsescript(script)
                             content = content.replace(script, result)
 
                         self.wfile.write(bytes(content,'utf-8')) # Read the file and send the contents                 
@@ -178,37 +182,49 @@ class WebServer(threading.Thread):
                     self.send_response(404)
                     self.end_headers()     
 
-            def parsescript(self, script):
-                if str(script).startswith('{{{%') and str(script).endswith('%}}}'):
-                    script = script.replace('{{{%','',1)
-                    script = script[::-1]
-                    script = script.replace('}}}%','',1)
-                    script = script[::-1]
-                    lines = script.split(';')
-                    result = ''
-                    for line in lines:
-                        try:
-                            spl = line.strip().split(' ', 1)
-                            method = spl[0]
-
-                            if method == 'echo':
-                                result += spl[1]
-                                
-                            if method == 'timestamp':
-                                result += str(int(time.time()))
-
-                        except:
-                            result += 'error'
-                            pass
-                    return result
-                else:
-                    return script
-
-        self.server = HTTPServer((self.host, self.port), Handler)
+        webhandler = partial(Handler, self)
+        self.server = HTTPServer((self.host, self.port), webhandler)
         thread = threading.Thread(target = self.server.serve_forever)
         thread.daemon = True
         thread.start() 
-    
+
+    def addscriptvar(self, var, value):
+        self.scriptvars[var] = value
+
+    def getscriptvar(self, var, default='nothing'):
+        if var in self.scriptvars:
+            return str(self.scriptvars[var])
+        else:
+            return str(default)
+
+    def parsescript(self, script):
+        if str(script).startswith('{{{%') and str(script).endswith('%}}}'):
+            script = script.replace('{{{%','',1)
+            script = script[::-1]
+            script = script.replace('}}}%','',1)
+            script = script[::-1]
+            lines = script.split(';')
+            result = ''
+            for line in lines:
+                try:
+                    spl = line.strip().split(' ', 1)
+                    method = spl[0]
+
+                    if method == 'echo':
+                        result += spl[1]
+
+                    if method == 'get':
+                        result += self.getscriptvar(spl[1])
+
+                    if method == 'timestamp':
+                        result += str(int(time.time()))
+
+                except:
+                    result += 'error'
+                    pass
+            return result
+        else:
+            return script    
     def kill(self):
         print("Shutting down WebServer") 
         self.server.shutdown()

@@ -6,5 +6,8 @@ class Main():
         self.webserver = webserver
         self.websocketserver = websocketserver
 
+        self.webserver.addscriptvar('websocket.host', self.websocketserver.host)
+        self.webserver.addscriptvar('websocket.port', self.websocketserver.port)
+
         mokkalib.triggerGlobalEvent('INITIALIZED')
 

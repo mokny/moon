@@ -5,7 +5,7 @@
 <script src="js/client.js" lang="JavaScript"></script>
 </head>
 <body>
-    asd {{{% echo asdf; echo 1; timestamp; echo gaga lala %}}}
+    asd {{{% echo asdf; echo 1; timestamp; echo gaga lala; get test; get websocket.host %}}}
     <button onclick="client.send('AUTH','asd')">AUTH</button>
     <button onclick="client.send('rmp','asd')">TEST</button>
 
@@ -39,7 +39,7 @@
 
 
         window.addEventListener("DOMContentLoaded", () => {
-            client = new Client("ws://192.168.178.5:9002/");
+            client = new Client("ws://{{{% get websocket.host %}}}:{{{% get websocket.port %}}}/");
             client.setMaxReconnects(10);
             client.setReconnectDelay(2000);
             client.setOnConnectHandler(onConnect);
