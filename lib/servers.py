@@ -169,7 +169,7 @@ class WebServer(threading.Thread):
                     if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js'):
                         f = open('www' + self.path, "r")
                         content = f.read()
-                        scripts = re.findall(r'\{\{\{.*?\}\}\}', content)
+                        scripts = re.findall(r'\{\{.*?\}\}', content)
                         for script in scripts:
                             result = self.webserver.parsescript(script)
                             content = content.replace(script, result)
@@ -198,10 +198,10 @@ class WebServer(threading.Thread):
             return str(default)
 
     def parsescript(self, script):
-        if str(script).startswith('{{{%') and str(script).endswith('%}}}'):
-            script = script.replace('{{{%','',1)
+        if str(script).startswith('{{%') and str(script).endswith('%}}'):
+            script = script.replace('{{%','',1)
             script = script[::-1]
-            script = script.replace('}}}%','',1)
+            script = script.replace('}}%','',1)
             script = script[::-1]
             lines = script.split(';')
             result = ''
@@ -216,6 +216,15 @@ class WebServer(threading.Thread):
                     if method == 'get':
                         result += self.getscriptvar(spl[1])
 
+                    if method == 'template':
+                        f = open(spl[1], "r")
+                        tplcontent = f.read()
+                        tplscripts = re.findall(r'\{\{.*?\}\}', tplcontent)
+                        for tplscript in tplscripts:
+                            tplresult = self.parsescript(tplscript)
+                            tplcontent = tplcontent.replace(tplscript, tplresult)
+                        result += tplcontent
+
                     if method == 'timestamp':
                         result += str(int(time.time()))
 
@@ -225,6 +234,7 @@ class WebServer(threading.Thread):
             return result
         else:
             return script    
+        
     def kill(self):
         print("Shutting down WebServer") 
         self.server.shutdown()
