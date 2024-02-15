@@ -8,6 +8,7 @@
 <body>
     asd {{% echo asdf; echo 1; timestamp; echo gaga lala; get test; get websocket.host %}}
     {{% template www/testtemplate.html %}}
+    {{% func test(1,2,3,4) %}}
     <button onclick="WSSClient.send('AUTH','asd')">AUTH</button>
     <button onclick="WSSClient.send('rmp','asd')">TEST</button>
 

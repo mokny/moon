@@ -12,6 +12,7 @@ import os
 import mimetypes
 import re
 from functools import partial
+import ast
 
 def newWebServer(host, port, directory):
     s = WebServer(host, port, directory)
@@ -146,6 +147,7 @@ class WebServer(threading.Thread):
         self.directory = directory
         self.server = None
         self.scriptvars = {}
+        self.scriptfunctions = {}
 
         signal.signal(signal.SIGTERM, self.sigterm_handler)  
 
@@ -206,6 +208,13 @@ class WebServer(threading.Thread):
             return str(self.scriptvars[var])
         else:
             return str(default)
+        
+
+    def setscriptfunction(self, var, value):
+        self.scriptfunctions[var] = value
+
+        
+
 
     def parsescript(self, script):
         if str(script).startswith('{{%') and str(script).endswith('%}}'):
@@ -238,8 +247,21 @@ class WebServer(threading.Thread):
                     if method == 'timestamp':
                         result += str(int(time.time()))
 
-                except:
-                    result += 'error'
+                    if method == 'func':
+                        s=spl[1]
+                        m=re.match("^\s*(\w+)\s*\((.*)\)",s)
+                        func_name =  str(m.group(1))
+
+                        spl = str(m.group(2)).split(',')
+                        params = []
+                        for s in spl:
+                            params.append(s)
+                        
+                        if func_name in self.scriptfunctions:
+                            result += self.scriptfunctions[func_name](params)
+                        #result += func_name + ' -> ' + str(params)
+                except Exception as e:
+                    result += 'error' + str(e)
                     pass
             return result
         else:

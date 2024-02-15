@@ -11,8 +11,9 @@ async def connectionhandler(server, client):
     print("New connection from " + str(client.ip) + " Path: " + str(client.path) + ' ID: ' + str(client.id))
     await client.send('AUTH', False)
     await server.broadcast('ONLINEUSERS', len(server.connections))
-    x = main.m.database.get('SELECT * FROM realms')
-    print(x[0]['id'])    
+    x = main.m.database.execute('SELECT * FROM users')
+    await client.send('test', x[0]['username'])
+    print(x[0]['username'])    
 
 
 async def messagehandler(server, client, method, payload):
