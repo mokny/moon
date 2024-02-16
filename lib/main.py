@@ -10,9 +10,7 @@ class Main():
         self.webserver.setscriptvar('websocket.host', self.websocketserver.host)
         self.webserver.setscriptvar('websocket.port', self.websocketserver.port)
 
-        self.webserver.setscriptfunction('test', self.test)
+        
 
         mokkalib.triggerGlobalEvent('INITIALIZED')
 
-    def test(self, a):
-        return 'yop' + str(a)

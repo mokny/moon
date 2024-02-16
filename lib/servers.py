@@ -164,7 +164,7 @@ class WebServer(threading.Thread):
                 if self.path == '/': self.path = '/index.html'
                 mimetype = mimetypes.guess_type(self.path)
 
-                if os.path.isfile('www' + self.path):
+                if os.path.isfile(self.webserver.directory + self.path):
                     self.send_response(200)
 
                     if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm'):
@@ -179,7 +179,7 @@ class WebServer(threading.Thread):
                     self.end_headers()
 
                     if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js') or self.path.lower().endswith('.css'):
-                        f = open('www' + self.path, "r")
+                        f = open(self.webserver.directory + self.path, "r")
                         content = f.read()
                         scripts = re.findall(r'\{\{.*?\}\}', content)
                         for script in scripts:
@@ -188,7 +188,7 @@ class WebServer(threading.Thread):
 
                         self.wfile.write(bytes(content,'utf-8')) 
                     else:
-                        with open('www' + self.path, 'rb') as file: 
+                        with open(self.webserver.directory + self.path, 'rb') as file: 
                             self.wfile.write(file.read())   
                 else:
                     self.send_response(404)

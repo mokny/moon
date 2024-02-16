@@ -5,9 +5,12 @@ exec = "init.py"
 python = "bin/python"
 
 [INSTALL]
+options.root = "custom"
+options.httpdocs = "www"
 options.server_host = "192.168.178.5"
 options.server_port_http = 9000
 options.server_port_websocket = 9002
+options.db_filename = "main.db"
 options.db_host = "localhost"
 options.db_user = "spc"
 options.db_password = "password"

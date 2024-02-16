@@ -6,14 +6,17 @@ import mokkalib
 import time
 import signal
 
+mokkalib.init()
+
 #Custom modules
 sys.path.insert(0, str(pathlib.Path(__file__).parent.resolve()) + '/lib')
-sys.path.insert(0, str(pathlib.Path(__file__).parent.resolve()) + '/custom')
+
+#Project root
+sys.path.insert(0, mokkalib.getOption('root'))
+
 import servers      # HTTP and Websocket Server
-import handlers     # Handlers for Websocket Server
 import database     # Database
 import main         # Main program
-import sys
 
 def sigterm_handler(_signo, _stack_frame):
     print("Term received")
@@ -24,24 +27,17 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 
 try:
-    # Initialize Mokkalib
-    mokkalib.init()
-    mokkalib.setEventHandler(handlers.mokkaEvent)
+    import framework_init
 
-    # Initialize Main Program Object
-    main.m = main.Main(database.newDB('SQLITE','main.db'),
-                servers.newWebServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_http'), "www"),
-                servers.newWebSocketServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_websocket'), handlers.connectionhandler, handlers.messagehandler, handlers.disconnecthandler)
+    main.f = framework_init.Framework()
+    mokkalib.setEventHandler(main.f.mokkaEvent)
+
+    main.m = main.Main(database.newDB('SQLITE',mokkalib.getOption('db_filename')),
+                servers.newWebServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_http'), mokkalib.getOption('httpdocs')),
+                servers.newWebSocketServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_websocket'), main.f.wsConnectionHandler, main.f.wsMessageHandler, main.f.wsDisconnectHandler)
                 )
     
-    
-    print(main.m.database.execute('DROP TABLE users'))
-    print(main.m.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)'))
-    print(main.m.database.execute("""INSERT INTO users (username, password) VALUES
-        ('mokny', 'asd'),
-        ('lala', 'asd'),
-        ('beb', 'asd')"""))
-    print(main.m.database.execute('SELECT * FROM users'))
+    main.f.start(main.m)
 
     while True:
         time.sleep(1)
