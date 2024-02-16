@@ -1,5 +1,7 @@
 # Webserver and Websocket Framework
 
+This Framework requires [Mokka](https://github.com/mokny/mokka) to be installed on your system.
+
 ## Installation
 ```
 mokka workspace create framework
