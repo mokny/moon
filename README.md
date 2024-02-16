@@ -27,7 +27,58 @@ mokka run framework framework
 ## Getting started
 You defined a project directory in `</my/absolute/project/path>`. Go to that path and you will find a file and a folder. The file `framework_init.py` is the starting point for your project. It contains all handlers. Inside the `www` folder you will find an example html file from where to start.
 
-## Python coding
+## HTML coding (The Client-Side)
+Start with the `index.html` inside the `www` folder. Basically you can use a complete custom HTML framework, as long as you load the client script. You need this in the header of your html file:
+```HTML
+<script src="framework_client" lang="JavaScript"></script>
+```
+Now your client is ready for configuration and connecting:
+```JS
+        function onConnect(event) {
+            console.log("Connected");
+        }
+
+        function onDisconnect(event) {
+            console.log("Disconnected");
+        }
+
+        function onReConnect(cnt) {
+            console.log("Reconnecting...Try #" + cnt);
+        }
+
+        function onReConnectFailed() {
+            console.log("Reconnect failed. No more retries.");
+        }
+
+        function onLatencyChanged(measuredby, latency) {
+            console.log('Latency measured by '+ measuredby + ': ' + latency + 'ms');
+        }
+
+        function onMessage(method, payload) {
+            console.log("Message");
+            console.log(method + ' ' +  payload);
+        }
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            WSSClient.setMaxReconnects(10);
+            WSSClient.setReconnectDelay(2000);
+            WSSClient.setOnConnectHandler(onConnect);
+            WSSClient.setOnDisconnectHandler(onDisconnect);
+            WSSClient.setOnMessageHandler(onMessage);
+            WSSClient.setOnReconnectHandler(onReConnect);
+            WSSClient.setOnReconnectFailedHandler(onReConnectFailed);
+            WSSClient.setOnLatencyChangedHandler(onLatencyChanged);
+            WSSClient.connect();            
+        });  
+```
+Sending a message to the server works like this:
+```JS
+WSSClient.send('MYMETHOD','somepayload')
+```
+
+
+## Python coding (The Server-Side)
 The file `framework_init.py` is your starting point. The minimum you need is this:
 ```python
 class Framework():
