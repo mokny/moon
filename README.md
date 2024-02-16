@@ -160,7 +160,7 @@ This will be replaced with the current unix timestamp.
 ```
 {{% template www/testtemplate.html %}}
 ```
-This will be replaced with the contents of the file testtemplate.html.
+This will be replaced with the contents of the file testtemplate.html. Attention: This is always relative to your project directory!
 
 ## Func Example
 ### Python part:
