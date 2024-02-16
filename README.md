@@ -121,7 +121,7 @@ print(self.main.websocketserver.clients)
 
 To broadcast a message to all connected clients use:
 ```python
-await self.main.websocketserver.broadcast('ONLINEUSERS', len(server.connections))
+await self.main.websocketserver.broadcast('MYMETHOD', 'somepayload')
 ```
 
 ### Accessing the Database
