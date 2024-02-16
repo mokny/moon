@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Client</title>
+<script src="framework_client" lang="JavaScript"></script>
+</head>
+<body>
+    asd {{% echo asdf; echo 1; timestamp; echo gaga lala; get test; get websocket.host %}}
+    {{% template www/testtemplate.html %}}
+    {{% func test(1,2,3,4) %}}
+    <button onclick="WSSClient.send('AUTH','asd')">AUTH</button>
+    <button onclick="WSSClient.send('rmp','asd')">TEST</button>
+
+    <script>
+
+        function onConnect(event) {
+            console.log("Connected");
+        }
+
+        function onDisconnect(event) {
+            console.log("Disconnected");
+        }
+
+        function onReConnect(cnt) {
+            console.log("Reconnecting...Try #" + cnt);
+        }
+
+        function onReConnectFailed() {
+            console.log("Reconnect failed. No more retries.");
+        }
+
+        function onLatencyChanged(measuredby, latency) {
+            console.log('Latency measured by '+ measuredby + ': ' + latency + 'ms');
+        }
+
+        function onMessage(method, payload) {
+            console.log("Message");
+            console.log(method + ' ' +  payload);
+        }
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            WSSClient.setMaxReconnects(10);
+            WSSClient.setReconnectDelay(2000);
+            WSSClient.setOnConnectHandler(onConnect);
+            WSSClient.setOnDisconnectHandler(onDisconnect);
+            WSSClient.setOnMessageHandler(onMessage);
+            WSSClient.setOnReconnectHandler(onReConnect);
+            WSSClient.setOnReconnectFailedHandler(onReConnectFailed);
+            WSSClient.setOnLatencyChangedHandler(onLatencyChanged);
+            WSSClient.connect();            
+        });         
+    </script>    
+</body>
+
+</html>
