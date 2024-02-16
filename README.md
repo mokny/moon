@@ -157,6 +157,7 @@ This will be replaced with the current unix timestamp.
 - echo TEXT
 - template PATH
 - func FUNCTION(WITH, PARAMETERS)
+- get somevar
 
 ## Templates Example
 ```
@@ -182,3 +183,15 @@ In your HTML document do this:
 {{% func myFunction(Foo, Bar) %}}
 ```
 This will be replaced with the return value of your function defined above.
+
+## get Example
+### Python part:
+Pass some variable and it's value to the scripting engine:
+```python
+self.main.webserver.setscriptvar('myvar', '1234')
+```
+### HTML part:
+```
+{{% get myvar %}}
+```
+This will be replaced with the var's value. In this example 1234.
