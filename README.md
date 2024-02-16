@@ -27,3 +27,27 @@ mokka run framework framework
 ## Getting started
 You defined a project directory in `</my/absolute/project/path>`. Go to that path and you will find a file and a folder. The file `framework_init.py` is the starting point for your project. It contains all handlers. Inside the `www` folder you will find an example html file from where to start.
 
+## Python coding
+The file `framework_init.py` is your starting point. The minimum you need is this:
+```python
+class Framework():
+    
+    def __init__(self):
+        self.main = False
+
+    def start(self, main):
+        self.main = main
+    
+    def mokkaEvent(self, event):
+        print(event)
+
+    async def wsConnectionHandler(self, server, client):
+        pass
+
+    async def wsMessageHandler(self, server, client, method, payload):
+        pass
+
+    async def wsDisconnectHandler(self, server, client):
+        pass
+```
+
