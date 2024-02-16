@@ -58,7 +58,7 @@ class Framework():
 ### Sending Data to Clients via websockets
 On every handler event, the client object gets passed to the handler. The easiest way to reply is this.
 ```python
-    await client.send('MYMETHOD', False)
+await client.send('MYMETHOD', False)
 ```
 The first parameter is a method string, and the second one is the payload, that can be any kind of datatype.
 
@@ -70,7 +70,7 @@ print(self.main.websocketserver.clients)
 
 To broadcast a message to all connected clients use:
 ```python
-    await self.main.websocketserver.broadcast('ONLINEUSERS', len(server.connections))
+await self.main.websocketserver.broadcast('ONLINEUSERS', len(server.connections))
 ```
 
 ### Accessing the Database
