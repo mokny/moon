@@ -141,3 +141,17 @@ Example:
 result = self.main.database.execute('SELECT * FROM users')
 print(result[0]['username'])    
 ```
+# Advanced
+## Scripting in HTML, JS, CSS documents
+The framework supports scripting. Scripts are supported in files with the extension .html, .js and .css.
+# Example
+```
+{{% timestamp %}}
+```
+This will be replaced with the current unix timestamp.
+
+# Available script tags
+- timestamp
+- echo <TEXT>
+- template <PATH>
+- func <FUNCTION WITH PARAMETERS>
