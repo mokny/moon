@@ -6,7 +6,7 @@ python = "bin/python"
 
 [INSTALL]
 options.root = "custom"
-options.httpdocs = "www"
+options.httpdocs = "custom/www"
 options.server_host = "192.168.178.5"
 options.server_port_http = 9000
 options.server_port_websocket = 9002
@@ -20,6 +20,7 @@ options.db_port = 3306
 
 piplibs = [
     'websockets',
-    'mysql-connector-python'
+    'mysql-connector-python',
+    'shutil'
 ]
 

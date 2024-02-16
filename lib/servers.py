@@ -158,13 +158,17 @@ class WebServer(threading.Thread):
         class Handler(SimpleHTTPRequestHandler):
             def __init__(self, webserver, *args, **kwargs):
                 self.webserver = webserver
+                self.sendclient = False
                 super().__init__(*args, **kwargs)
 
             def do_GET(self):
                 if self.path == '/': self.path = '/index.html'
+                if self.path == '/framework_client': 
+                    self.sendclient = True
+
                 mimetype = mimetypes.guess_type(self.path)
 
-                if os.path.isfile(self.webserver.directory + self.path):
+                if os.path.isfile(self.webserver.directory + self.path) or self.sendclient:
                     self.send_response(200)
 
                     if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm'):
@@ -176,11 +180,17 @@ class WebServer(threading.Thread):
                     else:
                         self.send_header("Content-Type", mimetype)
 
-                    self.end_headers()
+                    if self.sendclient: self.send_header("Content-Type", 'text/javascript')
 
-                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js') or self.path.lower().endswith('.css'):
-                        f = open(self.webserver.directory + self.path, "r")
-                        content = f.read()
+                    self.end_headers()
+                    if self.path.lower().endswith('.html') or self.path.lower().endswith('.htm') or self.path.lower().endswith('.js') or self.path.lower().endswith('.css') or self.sendclient:
+                        if self.sendclient:
+                            f = open('resources/client.js', "r")
+                            content = f.read()
+                        else:
+                            f = open(self.webserver.directory + self.path, "r")
+                            content = f.read()
+
                         scripts = re.findall(r'\{\{.*?\}\}', content)
                         for script in scripts:
                             result = self.webserver.parsescript(script)
