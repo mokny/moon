@@ -38,16 +38,55 @@ class Framework():
     def start(self, main):
         self.main = main
     
+    # Event handler for events from Mokka. 
     def mokkaEvent(self, event):
-        print(event)
+        pass
 
+    # Gets called when a new websocket connection was established
     async def wsConnectionHandler(self, server, client):
         pass
 
+    # Gets called when a new message was received via websockets
     async def wsMessageHandler(self, server, client, method, payload):
         pass
 
+    # Gets called when a client disconnects
     async def wsDisconnectHandler(self, server, client):
         pass
 ```
 
+### Sending Data to Clients via websockets
+On every handler event, the client object gets passed to the handler. The easiest way to reply is this.
+```python
+    await client.send('MYMETHOD', False)
+```
+The first parameter is a method string, and the second one is the payload, that can be any kind of datatype.
+
+But you may also access a dictionary of all connected clients, that is stored in `self.main.websocketserver.clients`:
+
+```python
+print(self.main.websocketserver.clients)
+```
+
+To broadcast a message to all connected clients use:
+```python
+    await self.main.websocketserver.broadcast('ONLINEUSERS', len(server.connections))
+```
+
+### Accessing the Database
+By default a SQLite Database is created. To simply execute a statement use:
+```python
+self.main.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)')
+```
+
+To retrieve data use:
+```python
+result = self.main.database.execute('SELECT * FROM users')
+print(result)
+```
+The result is always returned as a multi dimensional array with a dict for each returned row.
+Example:
+```python
+result = self.main.database.execute('SELECT * FROM users')
+print(result[0]['username'])    
+```
