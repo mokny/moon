@@ -144,14 +144,39 @@ print(result[0]['username'])
 # Advanced
 ## Scripting in HTML, JS, CSS documents
 The framework supports scripting. Scripts are supported in files with the extension .html, .js and .css.
-# Example
+## Example
 ```
 {{% timestamp %}}
 ```
 This will be replaced with the current unix timestamp.
 
-# Available script tags
+## Available script tags
 - timestamp
-- echo <TEXT>
-- template <PATH>
-- func <FUNCTION WITH PARAMETERS>
+- echo TEXT
+- template PATH
+- func FUNCTION(WITH, PARAMETERS)
+
+## Templates Example
+```
+{{% template www/testtemplate.html %}}
+```
+This will be replaced with the contents of the file testtemplate.html.
+
+## Func Example
+### Python part:
+Inside the Framework-Class, create some function like this
+```python
+def myFunction(self, params):
+    return params[0] + params[1] # Params are always passed as dict
+```
+Somewhere else (e.g. in the start function), register your function for use in the scripting engine:
+```python
+self.main.webserver.setscriptfunction('myFunction', self.myFunction)
+```
+
+### HTML part:
+In your HTML document do this:
+```
+{{% func myFunction(Foo, Bar) %}}
+```
+This will be replaced with the return value of your function defined above.
