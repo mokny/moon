@@ -1,19 +1,20 @@
-class Framework():
+class Moon_Framework():
     
     def __init__(self):
-        self.main = False
+        self.moon = False
 
-    def start(self, main):
-        self.main = main
-        self.main.webserver.setscriptfunction('test', self.test)
+    def start(self, moon):
+        self.moon = moon
+        
+        self.moon.webserver.setscriptfunction('test', self.test)
 
-        print(self.main.database.execute('DROP TABLE users'))
-        print(self.main.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)'))
-        print(self.main.database.execute("""INSERT INTO users (username, password) VALUES
+        print(self.moon.database.execute('DROP TABLE users'))
+        print(self.moon.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)'))
+        print(self.moon.database.execute("""INSERT INTO users (username, password) VALUES
             ('mokny', 'asd'),
             ('lala', 'asd'),
             ('beb', 'asd')"""))
-        print(self.main.database.execute('SELECT * FROM users'))
+        print(self.moon.database.execute('SELECT * FROM users'))
     
     def test(self, params):
         return 'yop' + str(params)     
@@ -31,7 +32,7 @@ class Framework():
         await client.send('PARTY', False)
         await client.send('AUTH', False)
         await server.broadcast('ONLINEUSERS', len(server.connections))
-        x = self.main.database.execute('SELECT * FROM users')
+        x = self.moon.database.execute('SELECT * FROM users')
         await client.send('test', x[0]['username'])
         print(x[0]['username'])    
 

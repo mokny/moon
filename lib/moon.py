@@ -1,7 +1,7 @@
 import mokkalib
 import socket
 
-class Main():
+class Moon():
     def __init__(self, database, webserver, websocketserver):  
         self.database = database
         self.webserver = webserver

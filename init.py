@@ -16,12 +16,12 @@ sys.path.insert(0, mokkalib.getOption('root'))
 
 import servers      # HTTP and Websocket Server
 import database     # Database
-import main         # Main program
+import moon         # Main program
 import framework_install
 
 def sigterm_handler(_signo, _stack_frame):
     print("Term received")
-    main.m.webserver.kill()
+    moon.m.webserver.kill()
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, sigterm_handler)
@@ -30,21 +30,21 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 try:
     import framework_init
 
-    main.f = framework_init.Framework()
-    mokkalib.setEventHandler(main.f.mokkaEvent)
+    moon.f = framework_init.Moon_Framework()
+    mokkalib.setEventHandler(moon.f.mokkaEvent)
 
-    main.m = main.Main(database.newDB('SQLITE',mokkalib.getOption('db_filename')),
+    moon.m = moon.Moon(database.newDB('SQLITE',mokkalib.getOption('db_filename')),
                 servers.newWebServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_http'), mokkalib.getOption('httpdocs')),
-                servers.newWebSocketServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_websocket'), main.f.wsConnectionHandler, main.f.wsMessageHandler, main.f.wsDisconnectHandler)
+                servers.newWebSocketServer(mokkalib.getOption('server_host'), mokkalib.getOption('server_port_websocket'), moon.f.wsConnectionHandler, moon.f.wsMessageHandler, moon.f.wsDisconnectHandler)
                 )
     
-    main.f.start(main.m)
+    moon.f.start(moon.m)
 
     while True:
         time.sleep(1)
     
 finally:
     print("Shutting down...")
-    main.m.webserver.kill()
+    moon.m.webserver.kill()
     print("Shutdown complete.")
 
