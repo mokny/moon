@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Install with curl -sSL https://raw.githubusercontent.com/mokny/tanks/main/install/install.sh | bash
 echo " ______                    _ "
 echo "|  ___ \                  | |"
 echo "| | _ | | ___   ___  ____ | |"
