@@ -3,27 +3,23 @@
 This Framework requires [Mokka](https://github.com/mokny/mokka) to be installed on your system.
 
 ## Installation
+
+Quick-Install:
 ```
-mokka workspace create framework
-mokka install framework /path
-```
-Now pick a project path (directory MUST NOT exist) and tell the framework to initialize it
-```
-mokka run framework framework setup </my/absolute/project/path>
-mokka kill framework framework
+curl -sSL https://raw.githubusercontent.com/mokny/moon/main/install/install.sh | bash
 ```
 
-Now configure the framework:
+Optional configuration:
 ```
-mokka setopt framework framework server_host <YourIPorHostname>
-mokka setopt framework framework server_port_http <YourWebsitePort>
-mokka setopt framework framework server_port_websocket <YourWebsocketPort>
+mokka setopt <workspace> moon server_host <YourIPorHostname>
+mokka setopt <workspace> moon server_port_http <YourWebsitePort>
+mokka setopt <workspace> moon server_port_websocket <YourWebsocketPort>
 ```
 
 
 Now run the framework:
 ```
-mokka run framework framework
+mokka run <workspace> moon
 ```
 
 ## Getting started
