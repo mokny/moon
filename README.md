@@ -28,7 +28,7 @@ You defined a project directory in `</my/absolute/project/path>`. Go to that pat
 ## HTML coding (The Client-Side)
 Start with the `index.html` inside the `www` folder. Basically you can use a complete custom HTML framework, as long as you load the client script. You need this in the header of your html file:
 ```HTML
-<script src="framework_client" lang="JavaScript"></script>
+<script src="moon" lang="JavaScript"></script>
 ```
 Now your client is ready for configuration and connecting:
 ```JS
@@ -59,20 +59,20 @@ Now your client is ready for configuration and connecting:
 
 
         window.addEventListener("DOMContentLoaded", () => {
-            WSSClient.setMaxReconnects(10);
-            WSSClient.setReconnectDelay(2000);
-            WSSClient.setOnConnectHandler(onConnect);
-            WSSClient.setOnDisconnectHandler(onDisconnect);
-            WSSClient.setOnMessageHandler(onMessage);
-            WSSClient.setOnReconnectHandler(onReConnect);
-            WSSClient.setOnReconnectFailedHandler(onReConnectFailed);
-            WSSClient.setOnLatencyChangedHandler(onLatencyChanged);
-            WSSClient.connect();            
+            moon.setMaxReconnects(10);
+            moon.setReconnectDelay(2000);
+            moon.setOnConnectHandler(onConnect);
+            moon.setOnDisconnectHandler(onDisconnect);
+            moon.setOnMessageHandler(onMessage);
+            moon.setOnReconnectHandler(onReConnect);
+            moon.setOnReconnectFailedHandler(onReConnectFailed);
+            moon.setOnLatencyChangedHandler(onLatencyChanged);
+            moon.connect();            
         });  
 ```
 Sending a message to the server works like this:
 ```JS
-WSSClient.send('MYMETHOD','somepayload')
+moon.send('MYMETHOD','somepayload')
 ```
 
 
@@ -114,29 +114,29 @@ The first parameter is a method string, and the second one is the payload, that 
 But you may also access a dictionary of all connected clients, that is stored in `self.main.websocketserver.clients`:
 
 ```python
-print(self.main.websocketserver.clients)
+print(self.moon.websocketserver.clients)
 ```
 
 To broadcast a message to all connected clients use:
 ```python
-await self.main.websocketserver.broadcast('MYMETHOD', 'somepayload')
+await self.moon.websocketserver.broadcast('MYMETHOD', 'somepayload')
 ```
 
 ### Accessing the Database
 By default a SQLite Database is created. To simply execute a statement use:
 ```python
-self.main.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)')
+self.moon.database.execute('CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)')
 ```
 
 To retrieve data use:
 ```python
-result = self.main.database.execute('SELECT * FROM users')
+result = self.moon.database.execute('SELECT * FROM users')
 print(result)
 ```
 The result is always returned as a multi dimensional array with a dict for each returned row.
 Example:
 ```python
-result = self.main.database.execute('SELECT * FROM users')
+result = self.moon.database.execute('SELECT * FROM users')
 print(result[0]['username'])    
 ```
 # Advanced
