@@ -10,8 +10,8 @@ echo "|_||_||_|\___/ \___/|_| |_|_|"
 echo "Website: https://github.com/mokny/moon"
 
 
-read -p "Enter Workspace-Ident: " workspace
-read -p "Absolute project directory: " project
+read -n "Enter Workspace-Ident: " workspace
+read -n "Absolute project directory: " project
 
 UUID=$(cat /proc/sys/kernel/random/uuid)
 tmppath="/tmp/moon_${UUID}"
