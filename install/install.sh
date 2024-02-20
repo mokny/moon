@@ -34,6 +34,7 @@ rm -rf ${tmppath}
 echo "Setting options..."
 mokka setopt ${workspace} moon root ${project} 
 mokka setopt ${workspace} moon httpdocs ${project}/www
+mokka setopt ${workspace} moon db_filename ${project}/moon.db
 
 echo "Running moon..."
 mokka run ${workspace} moon
