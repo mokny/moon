@@ -18,13 +18,22 @@ tmppath="/tmp/moon_${UUID}"
 git clone https://github.com/mokny/moon "${tmppath}"
 mokka workspace create ${workspace}
 mokka install ${workspace} ${tmppath}
-rm -rf ${tmppath}
 
 echo "Running setup for project folder..."
 
-mokka run ${workspace} moon setup ${project} 
-sleep 2
-mokka kill ${workspace} moon
+cp -rf ${tmppath}/custom ${project}
+
+echo "Removing temporary files..."
+rm -rf ${tmppath}
+
+
+#mokka run ${workspace} moon setup ${project} 
+#sleep 2
+#mokka kill ${workspace} moon
+
+echo "Setting options..."
+mokka setopt ${workspace} moon root ${project} 
+mokka setopt ${workspace} moon httpdocs ${project}/www
 
 echo "Running moon..."
 mokka run ${workspace} moon
