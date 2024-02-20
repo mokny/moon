@@ -35,6 +35,10 @@ echo "Setting options..."
 mokka setopt ${workspace} moon root ${project} 
 mokka setopt ${workspace} moon httpdocs ${project}/www
 mokka setopt ${workspace} moon db_filename ${project}/moon.db
+mokka setopt ${workspace} moon server_host 0.0.0.0
+mokka setopt ${workspace} moon server_port_http 9000
+mokka setopt ${workspace} moon server_port_websocket 9002
+
 
 echo "Running moon..."
 mokka run ${workspace} moon
