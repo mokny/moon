@@ -1,7 +1,7 @@
-var WSSClient;
+var moon;
 
 window.addEventListener("DOMContentLoaded", () => {
-    WSSClient = new WebSocketClient("ws://{{% get websocket.host %}}:{{% get websocket.port %}}/");
+    moon = new WebSocketClient("ws://{{% get websocket.host %}}:{{% get websocket.port %}}/");
 });
 
 class WebSocketClient {

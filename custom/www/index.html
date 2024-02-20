@@ -2,14 +2,14 @@
 <html>
 <head>
 <title>Client</title>
-<script src="framework_client" lang="JavaScript"></script>
+<script src="moon" lang="JavaScript"></script>
 </head>
 <body>
     asd {{% echo asdf; echo 1; timestamp; echo gaga lala; get test; get websocket.host %}}
     {{% template www/testtemplate.html %}}
     {{% func test(1,2,3,4) %}}
-    <button onclick="WSSClient.send('AUTH','asd')">AUTH</button>
-    <button onclick="WSSClient.send('rmp','asd')">TEST</button>
+    <button onclick="moon.send('AUTH','asd')">AUTH</button>
+    <button onclick="moon.send('rmp','asd')">TEST</button>
 
     <script>
 
@@ -40,15 +40,15 @@
 
 
         window.addEventListener("DOMContentLoaded", () => {
-            WSSClient.setMaxReconnects(10);
-            WSSClient.setReconnectDelay(2000);
-            WSSClient.setOnConnectHandler(onConnect);
-            WSSClient.setOnDisconnectHandler(onDisconnect);
-            WSSClient.setOnMessageHandler(onMessage);
-            WSSClient.setOnReconnectHandler(onReConnect);
-            WSSClient.setOnReconnectFailedHandler(onReConnectFailed);
-            WSSClient.setOnLatencyChangedHandler(onLatencyChanged);
-            WSSClient.connect();            
+            moon.setMaxReconnects(10);
+            moon.setReconnectDelay(2000);
+            moon.setOnConnectHandler(onConnect);
+            moon.setOnDisconnectHandler(onDisconnect);
+            moon.setOnMessageHandler(onMessage);
+            moon.setOnReconnectHandler(onReConnect);
+            moon.setOnReconnectFailedHandler(onReConnectFailed);
+            moon.setOnLatencyChangedHandler(onLatencyChanged);
+            moon.connect();            
         });         
     </script>    
 </body>

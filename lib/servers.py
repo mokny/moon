@@ -163,7 +163,7 @@ class WebServer(threading.Thread):
 
             def do_GET(self):
                 if self.path == '/': self.path = '/index.html'
-                if self.path == '/framework_client': 
+                if self.path == '/moon': 
                     self.sendclient = True
 
                 mimetype = mimetypes.guess_type(self.path)
