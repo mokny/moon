@@ -17,7 +17,6 @@ sys.path.insert(0, mokkalib.getOption('root'))
 import servers      # HTTP and Websocket Server
 import database     # Database
 import moon         # Main program
-import framework_install
 
 def sigterm_handler(_signo, _stack_frame):
     print("Term received")
