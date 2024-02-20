@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install with curl -sSL https://raw.githubusercontent.com/mokny/tanks/main/install/install.sh | bash
+# Install with curl -sSL https://raw.githubusercontent.com/mokny/moon/main/install/install.sh | bash
 echo " ______                    _ "
 echo "|  ___ \                  | |"
 echo "| | _ | | ___   ___  ____ | |"
@@ -15,7 +15,7 @@ read -p "Absolute project directory: " project </dev/tty
 
 UUID=$(cat /proc/sys/kernel/random/uuid)
 tmppath="/tmp/moon_${UUID}"
-git clone https://github.com/mokny/tanks "${tmppath}"
+git clone https://github.com/mokny/moon "${tmppath}"
 mokka workspace create ${workspace}
 mokka install ${workspace} ${tmppath}
 rm -rf ${tmppath}
@@ -26,4 +26,9 @@ mokka run ${workspace} moon setup ${project}
 sleep 2
 mokka kill ${workspace} moon
 
+echo "Running moon..."
 mokka run ${workspace} moon
+
+echo "Your Project Directory: ${project}"
+echo "To kill Moon: mokka kill ${workspace} moon"
+echo "To (re)start Moon: mokka run ${workspace} moon"
