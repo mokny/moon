@@ -1,6 +1,6 @@
 [GENERAL]
-title = "Tanks"
-ident = "tanks"
+title = "Moon"
+ident = "moon"
 exec = "init.py"
 python = "bin/python"
 
