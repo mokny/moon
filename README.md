@@ -3,7 +3,7 @@
 This Framework requires [Mokka](https://github.com/mokny/mokka) to be installed on your system.
 
 ## Concept
-Moon's concept is intended to use only JS and HTML (including CSS a.s.o.) on the client side and Python on the Serverside. Instead of using POST or GET commands, the client makes it's requests via the websocket interface and receives an async server response. For big data, the API-Interface should be used.
+Moon's concept intends to use only JS and HTML (including CSS a.s.o.) on the client side and Python on the Serverside. Instead of using POST or GET commands, the client makes it's requests via the websocket interface and receives an async server response. For big data, the API-Interface should be used.
 
 ## Installation
 
